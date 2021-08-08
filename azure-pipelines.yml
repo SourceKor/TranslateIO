@@ -29,9 +29,7 @@ jobs:
   - script: npm install --global yarn
     displayName: Install Yarn
   - script:
-      yarn
-      yarn compile
-      yarn test
+      yarn --version
     displayName: Compile and test extension
 
 - job: deploy_to_market
