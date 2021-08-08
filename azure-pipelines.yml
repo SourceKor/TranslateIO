@@ -1,0 +1,42 @@
+trigger:
+- master
+- refs/tags/Release-*
+
+pr:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: deploy
+    displayName: Deploy
+    type: boolean
+    default: false
+  - name: release_version
+    displayName: Release Version
+    type: string
+
+jobs:
+- job: continuous_integration
+  displayName: Continuous Integration
+  steps:
+  - task: NodeTool@0
+    displayName: Install Node
+    inputs:
+      versionSpec: '6.x'
+  - script: npm install --global yarn
+    displayName: Install Yarn
+  - script: yarn compile && yarn test
+    displayName: Compile and test extension
+
+- job: deploy_to_market
+  displayName: Deploy to extension marketplace
+  condition: and(succeeded(), eq(${{ parameters.deploy }}, 'true'))
+  dependsOn: continuous_integration
+  steps:
+  - script:
+      npm install -g vsce
+      sed -i s/::release-version::/${{ parameters.release_version }}/ package.json
+      vsce package
+      vsce publish
