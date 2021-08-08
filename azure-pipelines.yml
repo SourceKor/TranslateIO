@@ -1,6 +1,10 @@
 trigger:
-- master
-- refs/tags/Release-*
+  branches:
+    include:
+    - master
+  tags:
+    include:
+    - v*
 
 pr:
 - master
@@ -13,10 +17,6 @@ parameters:
     displayName: Deploy
     type: boolean
     default: false
-  - name: release_version
-    displayName: Release Version
-    type: string
-    default: '1.0.0'
 
 jobs:
 - job: continuous_integration
@@ -25,20 +25,27 @@ jobs:
   - task: NodeTool@0
     displayName: Install Node
     inputs:
-      versionSpec: '6.x'
-  - script: npm install --global yarn
+      versionSpec: '12.x'
+  - bash: npm install --global yarn
     displayName: Install Yarn
-  - script:
-      yarn --version
+  - bash: |
+      /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      echo ">>> Started xvfb"
+    displayName: Start xvfb
+  - bash: yarn && yarn && yarn test
     displayName: Compile and test extension
+    env:
+      DISPLAY: ':99.0'
 
 - job: deploy_to_market
   displayName: Deploy to extension marketplace
   condition: and(succeeded(), eq(${{ parameters.deploy }}, 'true'))
   dependsOn: continuous_integration
   steps:
-  - script:
-      npm install -g vsce
-      sed -i s/::release-version::/${{ parameters.release_version }}/ package.json
-      vsce package
-      vsce publish
+  - bash:
+      echo '$(Build.SourceBranchName)' | sed 's/v\(.\+\)/\1/' |
+      sed -i s/::release-version::/$(</dev/stdin)/ package.json &&
+      yarn &&
+      yarn deploy
+    env:
+      VSCE_PAT: $(VSCE_PAT)
