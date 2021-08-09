@@ -36,6 +36,11 @@
 		"configuration": {
 			"title": "TranslateIO Config",
 			"properties": {
+				"translateIO.promptToLanguage": {
+					"type": "boolean",
+					"default": false,
+					"description": "Prompts you to select the language to translate to before every translate operation"
+				},
 				"translateIO.fromLanguage": {
 					"type": "string",
 					"default": "auto",

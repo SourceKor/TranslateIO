@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
+import { XConfig } from '../models';
 
 export const STRING_VARIANCE_REGEX: RegExp = /['"']/g;
 export const STRING_CONTENT_REGEX: RegExp = /["\"'"].+?["\"'"]/g;
 
-export const getTranslationConfig = (): { from: string | undefined, to: string | undefined }  => {
+export const getTranslationConfig = (): XConfig  => {
 	const config = vscode.workspace.getConfiguration('translateIO');
 	return {
 		to: config.get<string>('toLanguage'),
-		from: config.get<string>('fromLanguage')
+		from: config.get<string>('fromLanguage'),
+		promptToLanguage: config.get<boolean>('promptToLanguage')
 	};
 };
 

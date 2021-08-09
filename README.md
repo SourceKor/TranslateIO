@@ -19,3 +19,4 @@ This extension contributes the following settings:
 * `translateIO.fromLanguage`: Select the language to translate from (default English)
 * `translateIO.toLanguage`: Select the language to translate to (default Spanish)
 
+## [Contributing](./docs/CONTRIBUTING.md)
