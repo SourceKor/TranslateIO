@@ -1,11 +1,11 @@
 {
 	"name": "translateio",
-	"displayName": "TranslateIO",
+	"displayName": "Translate IO",
 	"description": "Save time by translating your strings one-by-one or in bulk",
 	"version": "::release-version::",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/oleg3790/TranslateIO"
+		"url": "https://github.com/SourceKor/TranslateIO"
 	},
 	"publisher": "OKrysko",
 	"icon": "images/icon.png",
