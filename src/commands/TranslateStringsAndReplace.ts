@@ -4,9 +4,9 @@ import { setupHighlightCommand, replaceHighlightedContent, getTranslationConfig,
 const translate = require('@vitalets/google-translate-api');
 
 export const translateStringsAndReplace = async () =>
-    setupHighlightCommand(async (highlightedText) => {
+	setupHighlightCommand(async (highlightedText) => {
 		const isVerified = verifyStringsInHighlightedText(highlightedText);
-		
+
 		if (isVerified) {
 			const result = await doTranslateStrings(highlightedText);
 			replaceHighlightedContent(result);
@@ -14,41 +14,41 @@ export const translateStringsAndReplace = async () =>
 		}
 
 		return false;
-    });
+	});
     
 
 const doTranslateStrings = async (text: string): Promise<string> => {
-    const stringMatches = text.match(STRING_CONTENT_REGEX);
-    let translatedText = text;
+	const stringMatches = text.match(STRING_CONTENT_REGEX);
+	let translatedText = text;
 
-    if (stringMatches) {
-        for (let i = 0; i < stringMatches.length; i++) {
-            const config = getTranslationConfig();
-            let content = stringMatches[i];
+	if (stringMatches) {
+		for (let i = 0; i < stringMatches.length; i++) {
+			const config = getTranslationConfig();
+			let content = stringMatches[i];
 
-            // Strip out quotes before passing content to translate
-            const firstQuoteChar = content.match(/^./)?.[0];
-            const lastQuoteChar = content.match(/.$/)?.[0];
-            content = content.substr(1, content.length - 2);
+			// Strip out quotes before passing content to translate
+			const firstQuoteChar = content.match(/^./)?.[0];
+			const lastQuoteChar = content.match(/.$/)?.[0];
+			content = content.substr(1, content.length - 2);
 
-            const result = await translate(content, { ...config });
-            let translateResult: string = result.text;
+			const result = await translate(content, { ...config });
+			let translateResult: string = result.text;
 
-            // Escape any quote chars that are found in the translation result
-            if (translateResult.match(firstQuoteChar as string)) {
-                translateResult = translateResult.replace(firstQuoteChar as string, `\\${firstQuoteChar}`);
-            }
+			// Escape any quote chars that are found in the translation result
+			if (translateResult.match(firstQuoteChar as string)) {
+				translateResult = translateResult.replace(firstQuoteChar as string, `\\${firstQuoteChar}`);
+			}
 
-            // Add back quotes on replace
-            translatedText = translatedText.replace(
-                `${firstQuoteChar}${content}${lastQuoteChar}`,
-                `${firstQuoteChar}${translateResult}${lastQuoteChar}`);
-        }
+			// Add back quotes on replace
+			translatedText = translatedText.replace(
+				`${firstQuoteChar}${content}${lastQuoteChar}`,
+				`${firstQuoteChar}${translateResult}${lastQuoteChar}`);
+		}
 
-        return translatedText;
-    }
-    
-    throw new Error('No string content found');
+		return translatedText;
+	}
+	
+	throw new Error('No string content found');
 };
 
 const verifyStringsInHighlightedText = (highlightedText: string): boolean => {
