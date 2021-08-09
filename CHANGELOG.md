@@ -10,7 +10,7 @@
 
 - Added auto language detection and set as default fromLanguage
 
-### 1.1.1
+### 1.2.0
 
 - Fixed vulnerabilities in dependent projects
 - Logo updated
