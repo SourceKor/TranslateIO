@@ -1,13 +1,17 @@
 import * as vscode from 'vscode';
+import { QuickPickOptions } from 'vscode';
+import { XConfig } from '../models';
+import { LanguageMap } from './LanguageMap';
 
 export const STRING_VARIANCE_REGEX: RegExp = /['"']/g;
 export const STRING_CONTENT_REGEX: RegExp = /["\"'"].+?["\"'"]/g;
 
-export const getTranslationConfig = (): { from: string | undefined, to: string | undefined }  => {
+export const getTranslationConfig = (): XConfig  => {
 	const config = vscode.workspace.getConfiguration('translateIO');
 	return {
 		to: config.get<string>('toLanguage'),
-		from: config.get<string>('fromLanguage')
+		from: config.get<string>('fromLanguage'),
+		promptToLanguage: config.get<boolean>('promptToLanguage')
 	};
 };
 
@@ -81,4 +85,14 @@ export const setupHighlightCommand = async (translateCallback: (highlightedText:
 	} catch (ex) {
 		vscode.window.showErrorMessage('Error encountered while attempting to translate content');
 	}
+};
+
+export const getUserTranslateToValue = async (): Promise<string | undefined> => {
+	const options: QuickPickOptions = {
+		placeHolder: "Select a language to translate to"
+	};
+
+	const selection = await vscode.window.showQuickPick(Object.keys(LanguageMap), options);
+
+	return selection;
 };
