@@ -1,5 +1,6 @@
 import { QuickPickOptions, window } from 'vscode';
-import { setupHighlightCommand, getTranslationConfig, replaceHighlightedContent } from '../commons';
+import { LanguageMap } from '../commons/LanguageMap';
+import { setupHighlightCommand, getTranslationConfig, replaceHighlightedContent, getUserTranslateToValue } from '../commons/Utilities';
 import { XConfig } from '../models';
 const translate = require('@vitalets/google-translate-api');
 
@@ -8,11 +9,7 @@ export const translateAllAndReplace = async () =>
 		const config = getTranslationConfig();
 
 		if (config.promptToLanguage) {
-			const options: QuickPickOptions = {
-				placeHolder: "Select a language to translate to"
-			};
-
-			const selection = await window.showQuickPick(["fr", "af"], options);
+			const selection = await getUserTranslateToValue();
 
 			if (selection) {
 				const newConfig = { ...config, to: selection };

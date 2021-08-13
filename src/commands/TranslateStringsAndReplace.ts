@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { setupHighlightCommand, replaceHighlightedContent, getTranslationConfig, STRING_CONTENT_REGEX,
-        STRING_VARIANCE_REGEX } from '../commons';
+        STRING_VARIANCE_REGEX, 
+				getUserTranslateToValue} from '../commons/Utilities';
 const translate = require('@vitalets/google-translate-api');
 
 export const translateStringsAndReplace = async () =>
@@ -21,9 +22,19 @@ const doTranslateStrings = async (text: string): Promise<string> => {
 	const stringMatches = text.match(STRING_CONTENT_REGEX);
 	let translatedText = text;
 
+	let config = getTranslationConfig();
+
+	if (config.promptToLanguage) {
+		const selection = await getUserTranslateToValue();
+
+		if (selection) {
+			config = { ...config, to: selection };
+		}
+	}
+
 	if (stringMatches) {
 		for (let i = 0; i < stringMatches.length; i++) {
-			const config = getTranslationConfig();
+			
 			let content = stringMatches[i];
 
 			// Strip out quotes before passing content to translate
